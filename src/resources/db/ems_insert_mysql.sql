@@ -1,5 +1,3 @@
-USE ems;
-
 INSERT INTO cities (cityName) VALUES
 ('Atlanta'),
 ('Decatur'),
@@ -24,31 +22,45 @@ INSERT INTO addresses (street, cityID, stateID, zip) VALUES
 
 INSERT INTO employees (
 	empID,
+	username,
     firstName,
     lastName,
     email,
     hireDate,
     ssn,
-    addressID
-) VALUES
-(
-	101,
-    'John',
-    'Smith',
-    'john.smith@companyz.com',
-    '2022-01-15',
-    '123-45-6789',
-    1
+    addressID,
+    passwordHash,
+    passwordSalt,
+    role
+)values(
+        101,
+        'jsmith',
+        'John',
+        'Smith',
+        'john.smith@companyz.com',
+        '2022-01-15',
+        '123-45-6789',
+        1,
+        'Z4uEz0d3/knJPYGeg6mE7k/xk7/d6504PRan/YdnukM=',
+        'fTuQZM5TymaBCW/vWHlZhQ==',
+        'General'
 ),
 (
-	102,
-    'Lisa',
-    'Brown',
-    'lisa.brown@companyz.com',
-    '2023-07-15',
-    '987-65-4321',
-    2
+        102,
+        'lbrown',
+        'Lisa',
+        'Brown',
+        'lisa.brown@companyz.com',
+        '2023-07-15',
+        '987-65-4321',
+        2,
+        '9lGIii7Me6yqBQzSPS5NMD9EXmxxwnZSRMYnAWoWSJ8=',
+        'HYkEvkXj4DbwOCiMqFrnKQ==',
+        'General'
 );
+
+INSERT INTO system_admins (username, passwordHash, passwordSalt) VALUES
+('developer', 'OcAJ9CIMc36+G53+zZPz5XDNVbWVvkHxXBIE53HF6/Q=', 'R7dyNQpY/KN4frGQXyPI7A==');
 
 INSERT INTO employee_division (empID, divID, assignedDate) VALUES
 (101, 1, default),

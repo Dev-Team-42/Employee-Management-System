@@ -6,11 +6,15 @@ public class EMS {
         String url = "jdbc:mysql://localhost:3306/ems";
         String user = "root";
         String password = "password";
-        
+
         ArrayList<Employee> employees = new ArrayList<>();
 		Reports("employment", url, user, password, employees);
     }
     
+    public static void Login(){
+        
+    }
+
     public static void Reports(String reportName, String url, String user, String password, ArrayList<Employee> employees) {
         
         if(reportName.toLowerCase().equals("employment")) {
