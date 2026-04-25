@@ -77,6 +77,6 @@ public class Employee {
 	
 	public Employee()
 	{
-		// all values handled and set individually
+		
 	}
 }
