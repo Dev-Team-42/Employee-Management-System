@@ -1,7 +1,7 @@
 public class Employee {
 	
 	private int empID;
-	private String fname, lname, email, hireDate, ssn;
+	private String fname, lname, email, hireDate, ssn, dob;
 
 	public int getEmpID() {
 		return this.empID;
@@ -50,7 +50,15 @@ public class Employee {
 	public void setSSN(String ssn) {
 		this.ssn = ssn;
 	}
-		
+
+	public String getDOB() {
+		return this.dob;
+	}
+
+	public void setDOB(String dob) {
+		this.dob = dob;
+	}
+	
 	public Employee()
 	{
 		// all values handled and set individually
