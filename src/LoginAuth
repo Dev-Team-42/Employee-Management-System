@@ -1,0 +1,10 @@
+public class LoginAuth {
+    public static void main(String[] args){
+        String username = console.readLine("Enter your password for encryption: ");
+        String password = console.readLine("Enter your password for encryption: ");
+    }
+
+    public static void PrintBoth(username, password){
+        System.output.println(username + password);
+    }
+}
