@@ -53,12 +53,13 @@ CREATE TABLE addresses (
 
 CREATE TABLE employees (
     empID INT NOT NULL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE, -- Added username
+    username VARCHAR(50) NOT NULL UNIQUE,
     firstName VARCHAR(50) NOT NULL,
     lastName VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     hireDate DATE NOT NULL DEFAULT (CURRENT_DATE),
     ssn CHAR(11) NOT NULL UNIQUE,
+    DOB DATE not null,
     addressID INT,
     
     -- Authentication Columns:
