@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -5,14 +6,48 @@ public class EMS {
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/ems";
         String user = "root";
-        String password = "password";
+        String password = "VIPGSUpass2005#";
 
         ArrayList<Employee> employees = new ArrayList<>();
 		Reports("employment", url, user, password, employees);
+        Login(url, user, password);
     }
     
-    public static void Login(){
-        
+    public static void Login(String url, String user, String password) {
+        Console console = System.console();
+        String u_username = console.readLine("Enter your username: ");
+        String user_password = console.readLine("Enter your password: ");
+
+        ArrayList<String> encrypted_passwords = HashGenerator.Eryption(user_password);
+        String passwordHash = encrypted_passwords.get(0);
+        String passwordSalt = encrypted_passwords.get(1);
+
+
+        if (user.isEmpty() == false && password.isEmpty() == false){
+            String sqlcommand =  """
+            SELECT 'ADMIN' AS role 
+            FROM system_admins 
+            WHERE username = ? AND passwordHash = ? AND passwordSalt = ?
+
+            UNION
+
+            SELECT 'General' AS role 
+            FROM employees 
+            WHERE username = ? AND passwordHash = ? AND passwordSalt = ?
+            """;
+            try (Connection myConn1 = DriverManager.getConnection(url, user, password)){
+                Statement myStmt = myConn1.createStatement();
+                ResultSet myRS = myStmt.executeQuery(sqlcommand);
+
+                if (myRS.next()){
+
+                }
+
+            }catch (Exception e) {
+	            System.out.println("ERROR " + e.getLocalizedMessage());
+	        } finally {
+	        }
+        }
     }
 
     public static void Reports(String reportName, String url, String user, String password, ArrayList<Employee> employees) {
@@ -21,9 +56,9 @@ public class EMS {
 	        String sqlcommand = "SELECT empID, firstName, lastName, email, hireDate "+ 
 	        					"FROM employees ORDER BY hireDate; ";
         
-	        try (Connection myConn = DriverManager.getConnection(url, user, password)) {
-	            Statement myStmt = myConn.createStatement();
-	            ResultSet myRS = myStmt.executeQuery(sqlcommand);
+	        try (Connection myConn2 = DriverManager.getConnection(url, user, password)) {
+	            Statement mymyStmt = myConn2.createStatement();
+	            ResultSet myRS = mymyStmt.executeQuery(sqlcommand);
                 if (!myRS.next()) {
                     System.out.println("No Employees");
                     return;
