@@ -9,16 +9,12 @@ public class EMS {
         String user = "root";
         String password = "VIPGSUpass2005#";
 
-        String username = "username";
-        String hash = "hash";
-        String salt = "salt";
 
         ArrayList<Employee> employees = new ArrayList<>();
-		Reports("employment", url, user, password, employees);
-        Login(url, user, password, username, hash, salt);
+        Login(url, user, password);
     }
     
-    public static void Login(String url, String user, String password, String username, String hash, String salt) {
+    public static void Login(String url, String user, String password) {
         Console console = System.console();
         String u_username = console.readLine("Enter your username: ");
         String user_password = console.readLine("Enter your password: ");
@@ -28,15 +24,15 @@ public class EMS {
         String passwordSalt = encrypted_passwords.get(1);
 
         String sqlcommand = """
-        SELECT 'ADMIN' 
+        SELECT 'ADMIN' AS role , firstName, lastName
         FROM system_admins 
-        WHERE username = ? AND passwordHash = ?
+        WHERE username = ? AND password = ? 
 
         UNION
 
-        SELECT 'EMPLOYEE' 
+        SELECT 'EMPLOYEE' AS role, firstName, lastName
         FROM employees 
-        WHERE username = ? AND passwordHash = ?
+        WHERE username = ? AND password = ? 
         """;
 
 
@@ -44,23 +40,29 @@ public class EMS {
             PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
 
                 // set parameters (6 total)
-                stmt.setString(1, username);
-                stmt.setString(2, hash);
-                stmt.setString(3, salt);
+                stmt.setString(1, u_username);
+                stmt.setString(2, user_password);
+                //stmt.setString(2, passwordHash);
+               // stmt.setString(3, passwordSalt);
 
-                stmt.setString(4, username);
-                stmt.setString(5, hash);
-                stmt.setString(6, salt);
+                stmt.setString(3, u_username);
+                stmt.setString(4, user_password);
+                //stmt.setString(5, passwordHash);
+                //stmt.setString(6, passwordSalt);
 
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
                     String role = rs.getString(1);
+                    String firstname = rs.getString(2);
+                    String lastname = rs.getString(3);
 
                     if (role.equals("ADMIN")) {
                         System.out.println("Admin login");
+                        adminDisplay(firstname,lastname);
                     } else {
                         System.out.println("Employee login");
+                        employeeDisplay(firstname,lastname);
                     }
                 } else {
                     System.out.println("Invalid login");
@@ -70,6 +72,13 @@ public class EMS {
                 System.out.println("ERROR " + e.getMessage());
             }
         }
+
+    public static void adminDisplay(String firstname, String lastname){
+        System.out.println('\n');
+        System.out.println("Welcome, " + firstname + " " + lastname + ".\n");
+
+    }
+
     
 
     public static void Reports(String reportName, String url, String user, String password, ArrayList<Employee> employees) {
@@ -142,13 +151,5 @@ public class EMS {
         // scanner.close();
     };
     
-    public static void PrintEmployees(ArrayList<Employee> myEmployees) {
-
-        System.out.println("\n\n\nCurrent Employees Report at Company Z\n");
-        System.out.println("ID\tName\t\tEmail\t\tHire Date");
-        for(Employee e:myEmployees) {
-            System.out.println(e.getEmpID()+"\t"+ e.getFname()+" "+e.getLname()+"\t"+e.getEmail()+"\t"+e.getHireDate());
-        }
-    }
 }
 }
