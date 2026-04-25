@@ -36,8 +36,7 @@ public class EMS {
         }
 
         Employee foundEmp = EmpDataAccess.EmpSearch(sID, sSSN, sDOB, url, user, password);
-
-        // 5. Check if the employee was found and print the data
+        
         if (foundEmp != null) {
             System.out.println("\n--- Employee Record Found ---");
             System.out.println("ID:        " + foundEmp.getEmpID());
