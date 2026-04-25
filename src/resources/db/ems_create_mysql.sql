@@ -53,7 +53,7 @@ CREATE TABLE addresses (
 
 CREATE TABLE employees (
     empID INT NOT NULL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE, -- Added username
     firstName VARCHAR(50) NOT NULL,
     lastName VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -63,6 +63,7 @@ CREATE TABLE employees (
     addressID INT,
     
     -- Authentication Columns:
+    password VARCHAR(50) NOT NULL UNIQUE,
     passwordHash VARCHAR(64) NOT NULL, 
     passwordSalt VARCHAR(32) NOT NULL, 
     role VARCHAR(20) DEFAULT 'General',
@@ -74,6 +75,9 @@ CREATE TABLE employees (
 CREATE TABLE system_admins (
     adminID INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL UNIQUE,
+    firstName VARCHAR(50) NOT NULL UNIQUE,
+    lastName VARCHAR(50) NOT NULL UNIQUE,
     passwordHash VARCHAR(64) NOT NULL, -- 64 chars for Hex or 44 for Base64 SHA-256
     passwordSalt VARCHAR(32) NOT NULL  -- 24 chars for Base64 salt
 );

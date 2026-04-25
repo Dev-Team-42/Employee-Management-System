@@ -7,195 +7,44 @@ import java.util.Map;
 
 public class EMS {
 
+    final  static String URL = "jdbc:mysql://localhost:3306/ems";
+    final  static String DB_USER = "root";
+    final  static String DB_PASS = "";
+
     public static void main(String[] args) {
-        LoginResult login = login();
-        if (login == null) return;
-
-        final  String url = "jdbc:mysql://localhost:3306/ems";
-        final  String DB_USER = "root";
-        final  String DB_PASS = "Narwhals22??";
-
-
-        ArrayList<Employee> employees = new ArrayList<>();
-        Login(url, DB_USER, DB_PASS);
+        Login(URL, DB_USER, DB_PASS);
     }
-    
-    public static void Login(String url, String user, String password) {
-        Console console = System.console();
-        String u_username = console.readLine("Enter your username: ");
-        String user_password = console.readLine("Enter your password: ");
 
-        ArrayList<String> encrypted_passwords = HashGenerator.Eryption(user_password);
+    // ---------------
+     // LOGIN SYSTEM
+     //-----------------
+    public static void Login(String url, String DB_USER, String DB_PASS) {
+        Console console = System.console();
+        boolean Valid = false;
+
+        while (Valid != true){
+        String uUsername = console.readLine("Enter your username: ");
+        String uPassword = console.readLine("Enter your password: ");
+        
+
+        ArrayList<String> encrypted_passwords = HashGenerator.Eryption(uPassword);
         String passwordHash = encrypted_passwords.get(0);
         String passwordSalt = encrypted_passwords.get(1);
 
+        
         String sqlcommand = """
-        SELECT 'ADMIN' AS role , firstName, lastName
+        SELECT 'ADMIN' AS role, adminID AS empID, firstName, lastName
         FROM system_admins 
         WHERE username = ? AND password = ? 
 
         UNION
 
-        SELECT 'EMPLOYEE' AS role, firstName, lastName
+        SELECT 'EMPLOYEE' AS role, empID, firstName, lastName
         FROM employees 
         WHERE username = ? AND password = ? 
         """;
 
-
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-            PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
-
-                // set parameters (6 total)
-                stmt.setString(1, u_username);
-                stmt.setString(2, user_password);
-                //stmt.setString(2, passwordHash);
-               // stmt.setString(3, passwordSalt);
-
-                stmt.setString(3, u_username);
-                stmt.setString(4, user_password);
-                //stmt.setString(5, passwordHash);
-                //stmt.setString(6, passwordSalt);
-
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    String role = rs.getString(1);
-                    String firstname = rs.getString(2);
-                    String lastname = rs.getString(3);
-
-                    if (role.equals("ADMIN")) {
-                        System.out.println("Admin login");
-                        return new LoginResult("ADMIN", null);
-                    } else {
-                        System.out.println("Employee login");
-                        employeeDisplay(firstname,lastname);
-                    }
-                } else {
-                    System.out.println("Invalid login");
-                }
-
-            } catch (Exception e) {
-                System.out.println("ERROR " + e.getMessage());
-            }
-        }
-
-    public static void adminDisplay(String firstname, String lastname){
-        System.out.println('\n');
-        System.out.println("Welcome, " + firstname + " " + lastname + ".\n");
-
-    }
-
-    
-
-    // public static void Reports(String reportName, String url, String user, String password, ArrayList<Employee> employees) {
-        
-    //     if(reportName.toLowerCase().equals("employment")) {
-    //         Console console = System.console();
-	//         String sqlcommand = "SELECT empID, firstName, lastName, email, hireDate "+ 
-	//         					"FROM employees ORDER BY hireDate; ";
-        
-	//         try (Connection myConn2 = DriverManager.getConnection(url, user, password)) {
-	//             Statement mymyStmt = myConn2.createStatement();
-	//             ResultSet myRS = mymyStmt.executeQuery(sqlcommand);
-    //             if (!myRS.next()) {
-    //                 System.out.println("No Employees");
-    //                 return;
-    //             } else {
-    //                 do {
-    //                     Employee temp = new Employee();
-    //                     temp.setEmpID(myRS.getInt(1));
-    //                     temp.setFname(myRS.getString(2));
-    //                     temp.setLname(myRS.getString(3));
-    //                     temp.setEmail(myRS.getString(4));
-    //                     temp.setHireDate(myRS.getString(5));
-    //                     employees.add(temp);
-    //                 } while( myRS.next());
-    //             }
-	//             myConn2.close();
-	//         } catch (Exception e) {
-	//             System.out.println("ERROR " + e.getLocalizedMessage());
-	//         } finally {
-	//         }
-
-    //     String idInput = console.readLine("Enter Employee ID (leave blank to skip): ");
-    //     // String idInput = scanner.nextLine();
-    //     Integer sID = null; 
-    //     if (!idInput.trim().isEmpty()) {
-    //         try {
-    //             sID = Integer.parseInt(idInput.trim());
-    //         } catch (NumberFormatException e) {
-    //             System.out.println("Invalid ID format. Please enter a numeric value.");
-    //         }
-    //     }
-
-    //     String sSSN = console.readLine("Enter SSN (leave blank to skip): ");
-    //     // String sSSN = scanner.nextLine();
-    //     if (sSSN.trim().isEmpty()) {
-    //         sSSN = null;
-    //     }
-
-    //     String sDOB = console.readLine("Enter DOB (leave blank to skip): ");
-    //     // String sDOB = scanner.nextLine();
-    //     if (sDOB.trim().isEmpty()) {
-    //         sDOB = null;
-    //     }
-
-    //     Employee foundEmp = EmpDataAccess.EmpSearch(sID, sSSN, sDOB, url, user, password);
-        
-    //     if (foundEmp != null) {
-    //         System.out.println("\n--- Employee Record Found ---");
-    //         System.out.println("ID:        " + foundEmp.getEmpID());
-    //         System.out.println("Name:      " + foundEmp.getFname() + " " + foundEmp.getLname());
-    //         System.out.println("Email:     " + foundEmp.getEmail());
-    //         System.out.println("Hire Date: " + foundEmp.getHireDate());
-    //         System.out.println("SSN:       " + foundEmp.getSSN());
-    //         System.out.println("DOB:       " + foundEmp.getDOB()); 
-    //     } else {
-    //         System.out.println("\nNo employee found");
-    //     }
-
-    //     // scanner.close();
-    // };
-    
-    //     if (login.role.equals("ADMIN")) {
-    //         //adminMenu();
-    //     } else {
-    //         employeeMenu(login.empID);
-    //     }
-    // }
-
-    // ============================================================
-    // LOGIN
-    // ============================================================
-
-    public static class LoginResult {
-        public final String role;
-        LoginResult(String role) {
-            this.role = role;
-        }
-    }
-
-    public static LoginResult login() {
-        Console console = System.console();
-
-        if (console == null) {
-            System.out.println("ERROR: No console available. Run from a terminal.");
-            return null;
-        }
-        
-        String sqlcommand = """
-        SELECT 'ADMIN' AS role , firstName, lastName
-        FROM system_admins 
-        WHERE username = ? AND password = ? 
-
-        UNION
-
-        SELECT 'EMPLOYEE' AS role, firstName, lastName
-        FROM employees 
-        WHERE username = ? AND password = ? 
-        """;
-
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
         PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
 
             // set parameters (6 total)
@@ -212,24 +61,28 @@ public class EMS {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                Valid = true;
                 String role = rs.getString(1);
-                String firstname = rs.getString(2);
-                String lastname = rs.getString(3);
+                int empID = rs.getInt(2);
+                String firstName = rs.getString(3);
+                String lastName = rs.getString(4);
 
                 if (role.equals("ADMIN")) {
-                    System.out.println("Admin login");
-                    return new LoginResult("ADMIN");
+                    System.out.println("Admin login\n");
+                    adminMenu(firstName, lastName);
                 } else {
-                    System.out.println("Employee login");
-                    return new LoginResult("EMPLOYEE");
+                    System.out.println("Employee login\n");
+                    employeeMenu(empID, firstName, lastName);
                 }
             } else {
-                System.out.println("Invalid login");
+                System.out.println("Invalid login, please try again.\n");
             }
+            
 
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
+    }
     }
 
 
@@ -237,7 +90,9 @@ public class EMS {
     // ADMIN MENU
     // ============================================================
 
-    public static void adminMenu() {
+    public static void adminMenu(String firstName, String lastName) {
+        System.out.println("Welcome, " + firstName + " " + lastName);
+
         while (true) {
             System.out.println("\n=== Admin Menu ===");
             System.out.println("1. Search for employee data");
@@ -250,7 +105,7 @@ public class EMS {
                 case "1": searchEmployeeMenu();   break;
                 case "2": adminReportsMenu();     break;
                 case "3": salaryRaiseMenu();      break;
-                case "4": System.out.println("Goodbye."); return;
+                case "4": System.out.println("Signed Out."); return;
                 default:  System.out.println("Invalid choice.");
             }
         }
@@ -519,7 +374,9 @@ public class EMS {
     // EMPLOYEE MENU (general employee)
     // ============================================================
 
-    public static void employeeMenu(Integer empID) {
+    public static void employeeMenu(Integer empID, String firstName, String lastName) {
+        System.out.println("Welcome, " + firstName + " " + lastName);
+
         if (empID == null) {
             System.out.println("ERROR: Could not determine your employee ID.");
             return;

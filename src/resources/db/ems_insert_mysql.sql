@@ -30,6 +30,7 @@ INSERT INTO employees (
     ssn,
     DOB,
     addressID,
+    password,
     passwordHash,
     passwordSalt,
     role
@@ -41,8 +42,9 @@ INSERT INTO employees (
         'john.smith@companyz.com',
         '2022-01-15',
         '123-45-6789',
-        "2000-2-15",
+        '2005-05-07',
         1,
+        'cocobutter',
         'Z4uEz0d3/knJPYGeg6mE7k/xk7/d6504PRan/YdnukM=',
         'fTuQZM5TymaBCW/vWHlZhQ==',
         'General'
@@ -55,15 +57,16 @@ INSERT INTO employees (
         'lisa.brown@companyz.com',
         '2023-07-15',
         '987-65-4321',
-        "1982-10-15",
+        '2005-01-01',
         2,
+        'mcdsprite',
         '9lGIii7Me6yqBQzSPS5NMD9EXmxxwnZSRMYnAWoWSJ8=',
         'HYkEvkXj4DbwOCiMqFrnKQ==',
         'General'
 );
 
-INSERT INTO system_admins (username, passwordHash, passwordSalt) VALUES
-('developer', 'OcAJ9CIMc36+G53+zZPz5XDNVbWVvkHxXBIE53HF6/Q=', 'R7dyNQpY/KN4frGQXyPI7A==');
+INSERT INTO system_admins (username, firstName, lastName, password, passwordHash, passwordSalt) VALUES
+('developer', 'Tung Tung Tung', 'Sahur', 'tripletsahur', 'OcAJ9CIMc36+G53+zZPz5XDNVbWVvkHxXBIE53HF6/Q=', 'R7dyNQpY/KN4frGQXyPI7A==');
 
 INSERT INTO employee_division (empID, divID, assignedDate) VALUES
 (101, 1, default),
