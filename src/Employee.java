@@ -1,7 +1,7 @@
 public class Employee {
 	
-	private int empID;
-	private String fname, lname, email, hireDate, ssn, dob;
+	private int empID, addressID;
+	private String fname, lname, email, hireDate, ssn, dob, role;
 
 	public int getEmpID() {
 		return this.empID;
@@ -57,6 +57,22 @@ public class Employee {
 
 	public void setDOB(String dob) {
 		this.dob = dob;
+	}
+
+	public int getAddressID() {
+		return this.addressID;
+	}
+
+	public void setAddressID(int addressID) {
+		this.addressID = addressID;
+	}
+
+	public String getRole() {
+		return this.role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 	public Employee()
