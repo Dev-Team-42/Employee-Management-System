@@ -259,8 +259,8 @@ if (uUsername.equals("employee") && uPassword.equals("employee")) {
         }
 
         String confirm = prompt(
-            String.format("This will raise %d employee(s) by %.2f%%. Confirm? (y/n): ",
-                          affected, pct));
+    String.format("This will raise %d employee(s) by %.2f%%%%. Confirm? (y/n): ",
+                  affected, pct));
         if (!(confirm.equalsIgnoreCase("y") || confirm.equalsIgnoreCase("yes"))) {
             System.out.println("Cancelled.");
             return;
@@ -463,11 +463,13 @@ if (uUsername.equals("employee") && uPassword.equals("employee")) {
     // ============================================================
 
     private static String prompt(String message) {
-        Console console = System.console();
-        if (console == null) return "";
-        String s = console.readLine(message);
-        return (s == null) ? "" : s.trim();
-    }
+    Console console = System.console();
+    if (console == null) return "";
+    console.writer().print(message);
+    console.writer().flush();
+    String s = console.readLine();
+    return (s == null) ? "" : s.trim();
+}
 
     private static Integer parseIntOrNull(String s) {
         if (s == null || s.isEmpty()) return null;
