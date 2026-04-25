@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import java.io.Console;
 import java.sql.*;
-=======
->>>>>>> 138ccb4b7d05e1d5905c8307b7a246c318bc1ec1
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -10,15 +7,18 @@ public class EMS {
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/ems";
         String user = "root";
-<<<<<<< HEAD
         String password = "VIPGSUpass2005#";
+
+        String username = "username";
+        String hash = "hash";
+        String salt = "salt";
 
         ArrayList<Employee> employees = new ArrayList<>();
 		Reports("employment", url, user, password, employees);
-        Login(url, user, password);
+        Login(url, user, password, username, hash, salt);
     }
     
-    public static void Login(String url, String user, String password) {
+    public static void Login(String url, String user, String password, String username, String hash, String salt) {
         Console console = System.console();
         String u_username = console.readLine("Enter your username: ");
         String user_password = console.readLine("Enter your password: ");
@@ -27,37 +27,55 @@ public class EMS {
         String passwordHash = encrypted_passwords.get(0);
         String passwordSalt = encrypted_passwords.get(1);
 
+        String sqlcommand = """
+        SELECT 'ADMIN' 
+        FROM system_admins 
+        WHERE username = ? AND passwordHash = ?
 
-        if (user.isEmpty() == false && password.isEmpty() == false){
-            String sqlcommand =  """
-            SELECT 'ADMIN' AS role 
-            FROM system_admins 
-            WHERE username = ? AND passwordHash = ? AND passwordSalt = ?
+        UNION
 
-            UNION
+        SELECT 'EMPLOYEE' 
+        FROM employees 
+        WHERE username = ? AND passwordHash = ?
+        """;
 
-            SELECT 'General' AS role 
-            FROM employees 
-            WHERE username = ? AND passwordHash = ? AND passwordSalt = ?
-            """;
-            try (Connection myConn1 = DriverManager.getConnection(url, user, password)){
-                Statement myStmt = myConn1.createStatement();
-                ResultSet myRS = myStmt.executeQuery(sqlcommand);
 
-                if (myRS.next()){
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+            PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
 
+                // set parameters (6 total)
+                stmt.setString(1, username);
+                stmt.setString(2, hash);
+                stmt.setString(3, salt);
+
+                stmt.setString(4, username);
+                stmt.setString(5, hash);
+                stmt.setString(6, salt);
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String role = rs.getString(1);
+
+                    if (role.equals("ADMIN")) {
+                        System.out.println("Admin login");
+                    } else {
+                        System.out.println("Employee login");
+                    }
+                } else {
+                    System.out.println("Invalid login");
                 }
 
-            }catch (Exception e) {
-	            System.out.println("ERROR " + e.getLocalizedMessage());
-	        } finally {
-	        }
+            } catch (Exception e) {
+                System.out.println("ERROR " + e.getMessage());
+            }
         }
-    }
+    
 
     public static void Reports(String reportName, String url, String user, String password, ArrayList<Employee> employees) {
         
         if(reportName.toLowerCase().equals("employment")) {
+            Console console = System.console();
 	        String sqlcommand = "SELECT empID, firstName, lastName, email, hireDate "+ 
 	        					"FROM employees ORDER BY hireDate; ";
         
@@ -78,22 +96,14 @@ public class EMS {
                         employees.add(temp);
                     } while( myRS.next());
                 }
-	            myConn.close();
+	            myConn2.close();
 	        } catch (Exception e) {
 	            System.out.println("ERROR " + e.getLocalizedMessage());
 	        } finally {
 	        }
-=======
-        String password = "password";
-        Scanner scanner = new Scanner(System.in);
 
-        PrintEmployees(EmpDataAccess.CurrentEmployees(url, user, password));
-
-        System.out.println("--- Employee Search ---");
->>>>>>> 138ccb4b7d05e1d5905c8307b7a246c318bc1ec1
-
-        System.out.print("Enter Employee ID (leave blank to skip): ");
-        String idInput = scanner.nextLine();
+        String idInput = console.readLine("Enter Employee ID (leave blank to skip): ");
+        // String idInput = scanner.nextLine();
         Integer sID = null; 
         if (!idInput.trim().isEmpty()) {
             try {
@@ -103,14 +113,14 @@ public class EMS {
             }
         }
 
-        System.out.print("Enter SSN (leave blank to skip): ");
-        String sSSN = scanner.nextLine();
+        String sSSN = console.readLine("Enter SSN (leave blank to skip): ");
+        // String sSSN = scanner.nextLine();
         if (sSSN.trim().isEmpty()) {
             sSSN = null;
         }
 
-        System.out.print("Enter DOB (leave blank to skip): ");
-        String sDOB = scanner.nextLine();
+        String sDOB = console.readLine("Enter DOB (leave blank to skip): ");
+        // String sDOB = scanner.nextLine();
         if (sDOB.trim().isEmpty()) {
             sDOB = null;
         }
@@ -129,7 +139,7 @@ public class EMS {
             System.out.println("\nNo employee found");
         }
 
-        scanner.close();
+        // scanner.close();
     };
     
     public static void PrintEmployees(ArrayList<Employee> myEmployees) {
@@ -140,4 +150,5 @@ public class EMS {
             System.out.println(e.getEmpID()+"\t"+ e.getFname()+" "+e.getLname()+"\t"+e.getEmail()+"\t"+e.getHireDate());
         }
     }
+}
 }
