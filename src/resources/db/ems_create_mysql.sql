@@ -59,6 +59,7 @@ CREATE TABLE employees (
     email VARCHAR(100) NOT NULL UNIQUE,
     hireDate DATE NOT NULL DEFAULT (CURRENT_DATE),
     ssn CHAR(11) NOT NULL UNIQUE,
+    DOB DATE not null,
     addressID INT,
     
     -- Authentication Columns:
