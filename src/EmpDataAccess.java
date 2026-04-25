@@ -31,12 +31,11 @@ public class EmpDataAccess {
         return null; // No employees
     };
 
-    public static Employee searchByEmpID(int sID, String sSSN, String sDOB, String url, String user, String password) {
+    public static Employee EmpSearch(Integer sID, String sSSN, String sDOB, String url, String user, String password) {
         // Using a JOIN assuming DOB was added to the addresses table
-        String sql = "SELECT e.empID, e.firstName, e.lastName, e.email, e.hireDate, e.ssn, a.DOB " +
-                     "FROM employees e " +
-                     "LEFT JOIN addresses a ON e.addressID = a.addressID " +
-                     "WHERE e.empID = ? AND e.ssn = ? AND a.DOB = ?";
+        String sql = "SELECT empID, firstName, lastName, email, hireDate, ssn, DOB " +
+                     "FROM employees " +
+                     "WHERE empID = ? OR (ssn = ? AND DOB = ?)";
 
 	    try (Connection myConn = DriverManager.getConnection(url, user, password)) {
 	        PreparedStatement myStmt = myConn.prepareStatement(sql);
@@ -62,5 +61,46 @@ public class EmpDataAccess {
 	        System.out.println("ERROR " + e.getLocalizedMessage());
         }
         return null; // Employee is not found
+    };
+    
+    public static boolean updateEmpData(Employee emp, String url, String user, String password) {
+        
+        // Define the UPDATE queries for both tables
+        String updateEmployeeSQL = "UPDATE employees SET firstName = ?, lastName = ?, email = ?, addressID = ?, role = ? WHERE empID = ?";
+        
+
+        try (Connection myConn = DriverManager.getConnection(url, user, password)) {
+            
+            myConn.setAutoCommit(false);
+
+            try (PreparedStatement myStmtEmp = myConn.prepareStatement(updateEmployeeSQL)) {
+
+                // set parameters for the employees table update
+                myStmtEmp.setString(1, emp.getFname());
+                myStmtEmp.setString(2, emp.getLname());
+                myStmtEmp.setString(3, emp.getEmail());
+                myStmtEmp.setInt(4, emp.getAddressID());
+                myStmtEmp.setInt(5, emp.getEmpID());
+                myStmtEmp.setString(3, emp.getRole());
+
+                myStmtEmp.executeUpdate();
+
+                // If both succeed without errors, commit the changes to the database
+                myConn.commit();
+                return true;
+
+            } catch (SQLException e) {
+                // rollback the transaction so no partial data is saved
+                myConn.rollback();
+                System.out.println("Update failed. Transaction rolled back: " + e.getMessage());
+                return false;
+            } finally {
+                myConn.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Database connection error: " + e.getMessage());
+            return false;
+        }
     }
 };
