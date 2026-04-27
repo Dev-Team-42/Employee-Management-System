@@ -4,6 +4,7 @@ public class Employee {
     private String fname, lname, email, hireDate, ssn, dob, role;
 
     public Employee() {
+
     }
 
     public Employee(int empID, String fname, String lname, String email, String hireDate) {
