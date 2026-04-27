@@ -27,9 +27,9 @@ public class EMS {
         String uPassword = console.readLine("Enter your password: ");
         
 
-        ArrayList<String> encrypted_passwords = HashGenerator.Eryption(uPassword);
-        String passwordHash = encrypted_passwords.get(0);
-        String passwordSalt = encrypted_passwords.get(1);
+        // ArrayList<String> encrypted_passwords = HashGenerator.Eryption(uPassword);
+        // String passwordHash = encrypted_passwords.get(0);
+        // String passwordSalt = encrypted_passwords.get(1);
 
         
         String sqlcommand = """
