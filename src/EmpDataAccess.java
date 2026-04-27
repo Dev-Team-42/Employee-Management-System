@@ -33,13 +33,13 @@ public class EmpDataAccess {
         return emps;
     }
 
-    public static Employee EmpSearch(Integer sID, String sSSN, String sDOB,
+    public static Employee EmpSearch(Integer sID, String sSSN, String sDOB, String firstname, String lastname,
                                      String url, String user, String password) {
         if (sID == null && sSSN == null && sDOB == null) return null;
 
         String sql = "SELECT empID, firstName, lastName, email, hireDate, ssn, DOB, addressID, role " +
                      "FROM employees " +
-                     "WHERE empID = ? OR (ssn = ? AND DOB = ?)";
+                     "WHERE empID = ? OR (ssn = ? AND DOB = ?) or (firstName = ? AND lastName = ?)";
 
         try (Connection myConn = DriverManager.getConnection(url, user, password);
              PreparedStatement myStmt = myConn.prepareStatement(sql)) {
@@ -47,6 +47,8 @@ public class EmpDataAccess {
             if (sID != null) myStmt.setInt(1, sID);    else myStmt.setNull(1, Types.INTEGER);
             if (sSSN != null) myStmt.setString(2, sSSN); else myStmt.setNull(2, Types.VARCHAR);
             if (sDOB != null) myStmt.setString(3, sDOB); else myStmt.setNull(3, Types.VARCHAR);
+            if (firstname != null) myStmt.setString(4, firstname); else myStmt.setNull(4, Types.VARCHAR);
+            if (lastname != null) myStmt.setString(5, lastname); else myStmt.setNull(5, Types.VARCHAR);
 
             try (ResultSet rs = myStmt.executeQuery()) {
                 if (rs.next()) return mapRow(rs);
@@ -59,47 +61,15 @@ public class EmpDataAccess {
 
     public static Employee EmpSearchByName(String firstName, String lastName,
                                            String url, String user, String password) {
-        if (firstName == null || lastName == null
-                || firstName.isEmpty() || lastName.isEmpty()) return null;
-
-        String sql = "SELECT empID, firstName, lastName, email, hireDate, ssn, DOB, addressID, role " +
-                     "FROM employees WHERE firstName = ? AND lastName = ?";
-
-        try (Connection myConn = DriverManager.getConnection(url, user, password);
-             PreparedStatement myStmt = myConn.prepareStatement(sql)) {
-
-            myStmt.setString(1, firstName);
-            myStmt.setString(2, lastName);
-
-            try (ResultSet rs = myStmt.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
-            }
-        } catch (SQLException e) {
-            System.out.println("ERROR " + e.getLocalizedMessage());
-        }
-        return null;
+        return EmpSearch(null, null, null, firstName, lastName, url, user, password);
     }
 
-    public static Employee EmpSearchBySSN(String ssn, String url, String user, String password) {
-        if (ssn == null || ssn.isEmpty()) return null;
-
-        String sql = "SELECT empID, firstName, lastName, email, hireDate, ssn, DOB, addressID, role " +
-                     "FROM employees WHERE ssn = ?";
-
-        try (Connection myConn = DriverManager.getConnection(url, user, password);
-             PreparedStatement stmt = myConn.prepareStatement(sql)) {
-            stmt.setString(1, ssn);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
-            }
-        } catch (SQLException e) {
-            System.out.println("ERROR " + e.getMessage());
-        }
-        return null;
+    public static Employee EmpSearchBySSN(String ssn, String dob, String url, String user, String password) {
+        return EmpSearch(null, ssn, dob, null, null, url, user, password);
     }
 
     public static Employee EmpSearchByID(int empID, String url, String user, String password) {
-        return EmpSearch(empID, null, null, url, user, password);
+        return EmpSearch(empID, null, null, null, null, url, user, password);
     }
 
     public static boolean updateField(int empID, String field, String newValue,
