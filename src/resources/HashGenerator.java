@@ -8,7 +8,7 @@ public class HashGenerator {
     public static void main(String[] args) throws Exception {
     }
 
-    public static ArrayList<String> Eryption(String password) {
+    public static ArrayList<String> eryption(String password) {
         try {
             if (password != null && !password.isEmpty()) {
                 SecureRandom random = new SecureRandom();
