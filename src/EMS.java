@@ -22,67 +22,65 @@ public class EMS {
         Console console = System.console();
         boolean Valid = false;
 
-        while (Valid != true){
-        String uUsername = console.readLine("Enter your username: ");
-        String uPassword = console.readLine("Enter your password: ");
-        
-
-        ArrayList<String> encrypted_passwords = HashGenerator.eryption(uPassword);
-        String passwordHash = encrypted_passwords.get(0);
-        String passwordSalt = encrypted_passwords.get(1);
-
-        
-        String sqlcommand = """
-        SELECT 'ADMIN' AS role, adminID AS empID, firstName, lastName
-        FROM system_admins 
-        WHERE username = ? AND password = ? 
-
-        UNION
-
-        SELECT 'EMPLOYEE' AS role, empID, firstName, lastName
-        FROM employees 
-        WHERE username = ? AND password = ? 
-        """;
-
-        try (Connection conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
-        PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
-
-            // set parameters (6 total)
-            stmt.setString(1, uUsername);
-            stmt.setString(2, uPassword);
-            //stmt.setString(2, passwordHash);
-            // stmt.setString(3, passwordSalt);
-
-            stmt.setString(3, uUsername);
-            stmt.setString(4, uPassword);
-            //stmt.setString(5, passwordHash);
-            //stmt.setString(6, passwordSalt);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                Valid = true;
-                String role = rs.getString(1);
-                int empID = rs.getInt(2);
-                String firstName = rs.getString(3);
-                String lastName = rs.getString(4);
-
-                if (role.equals("ADMIN")) {
-                    System.out.println("Admin login\n");
-                    adminMenu(firstName, lastName);
-                } else {
-                    System.out.println("Employee login\n");
-                    employeeMenu(empID, firstName, lastName);
-                }
-            } else {
-                System.out.println("Invalid login, please try again.\n");
-            }
+        while (!Valid) {
+            String uUsername = console.readLine("Enter your username: ");
+            String uPassword = console.readLine("Enter your password: ");
             
 
-        } catch (Exception e) {
-            System.out.println("ERROR " + e.getMessage());
+            ArrayList<String> encrypted_passwords = HashGenerator.eryption(uPassword);
+            String passwordHash = encrypted_passwords.get(0);
+            String passwordSalt = encrypted_passwords.get(1);
+
+            
+            String sqlcommand = """
+            SELECT 'ADMIN' AS role, adminID AS empID, firstName, lastName
+            FROM system_admins 
+            WHERE username = ? AND password = ? 
+
+            UNION
+
+            SELECT 'EMPLOYEE' AS role, empID, firstName, lastName
+            FROM employees 
+            WHERE username = ? AND password = ? 
+            """;
+
+            try (Connection conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
+            PreparedStatement stmt = conn.prepareStatement(sqlcommand)) {
+
+                // set parameters (6 total)
+                stmt.setString(1, uUsername);
+                stmt.setString(2, uPassword);
+                //stmt.setString(2, passwordHash);
+                // stmt.setString(3, passwordSalt);
+
+                stmt.setString(3, uUsername);
+                stmt.setString(4, uPassword);
+                //stmt.setString(5, passwordHash);
+                //stmt.setString(6, passwordSalt);
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    Valid = true;
+                    String role = rs.getString(1);
+                    int empID = rs.getInt(2);
+                    String firstName = rs.getString(3);
+                    String lastName = rs.getString(4);
+
+                    if (role.equals("ADMIN")) {
+                        System.out.println("Admin login\n");
+                        adminMenu(firstName, lastName);
+                    } else {
+                        System.out.println("Employee login\n");
+                        employeeMenu(empID, firstName, lastName);
+                    }
+                } else {
+                    System.out.println("Invalid login, please try again.\n");
+                }
+                
+
+            } catch (Exception e) {System.out.println("ERROR " + e.getMessage());}
         }
-    }
     }
 
 
