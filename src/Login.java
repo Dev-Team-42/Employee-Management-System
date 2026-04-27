@@ -7,9 +7,6 @@ public class Login {
     private String username, password;
     private String firstName, lastName, role;
 
-    public Login()  {
-
-    }
 
     public Login(int empID, String username, String password, String firstName, String lastName, String role)  {
         this.empID = empID;

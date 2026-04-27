@@ -6,3 +6,4 @@ public class MakeEmployee {
         System.out.println("Salt: " + result.get(1));
     }
 }
+

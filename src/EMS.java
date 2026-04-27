@@ -8,11 +8,11 @@ public class EMS {
 
     final  static String URL = "jdbc:mysql://localhost:3306/ems";
     final  static String DB_USER = "root";
-    final  static String DB_PASS = "password";
+    final  static String DB_PASS = "VIPGSUpass2005#";
 
     public static void main(String[] args) {
-        
-        Object user = Login.loginMenu(URL, DB_USER, DB_PASS);
+
+        Login user = Login.loginMenu(URL, DB_USER, DB_PASS);
 
         if (user.getRole().equals("ADMIN")) {
             System.out.println("Admin login\n");

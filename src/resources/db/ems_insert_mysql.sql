@@ -113,6 +113,9 @@ INSERT INTO payroll (
     100800.00
 );
 
+UPDATE employee_job_titles
+SET effectiveDate = '2026-01-01'
+WHERE empID IN (101, 102);
 
 -- testing selects
 
