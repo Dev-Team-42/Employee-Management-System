@@ -9,7 +9,7 @@ public class EMS {
 
     final  static String URL = "jdbc:mysql://localhost:3306/ems";
     final  static String DB_USER = "root";
-    final  static String DB_PASS = "";
+    final  static String DB_PASS = "password";
 
     public static void main(String[] args) {
         Login(URL, DB_USER, DB_PASS);
@@ -27,7 +27,7 @@ public class EMS {
         String uPassword = console.readLine("Enter your password: ");
         
 
-        ArrayList<String> encrypted_passwords = HashGenerator.Eryption(uPassword);
+        ArrayList<String> encrypted_passwords = HashGenerator.eryption(uPassword);
         String passwordHash = encrypted_passwords.get(0);
         String passwordSalt = encrypted_passwords.get(1);
 
@@ -133,10 +133,9 @@ public class EMS {
     private static Employee searchEmployeeFlow() {
         System.out.println("\n--- Search Employee ---");
         System.out.println("1. By name");
-        System.out.println("2. By DOB");
-        System.out.println("3. By SSN");
-        System.out.println("4. By Employee ID");
-        System.out.println("5. Back");
+        System.out.println("2. By SSN & DOB");
+        System.out.println("3. By Employee ID");
+        System.out.println("4. Back");
         String choice = prompt("Choose an option: ");
 
         switch (choice) {
@@ -147,13 +146,10 @@ public class EMS {
             }
             case "2": {
                 String dob = prompt("DOB (YYYY-MM-DD): ");
-                return EmpDataAccess.EmpSearch(null, null, dob, URL, DB_USER, DB_PASS);
+                String ssn = prompt("SSN: ");
+                return EmpDataAccess.EmpSearchBySSN(ssn, dob, URL, DB_USER, DB_PASS);
             }
             case "3": {
-                String ssn = prompt("SSN: ");
-                return EmpDataAccess.EmpSearchBySSN(ssn, URL, DB_USER, DB_PASS);
-            }
-            case "4": {
                 Integer id = parseIntOrNull(prompt("Employee ID: "));
                 if (id == null) {
                     System.out.println("Invalid ID.");
@@ -161,7 +157,7 @@ public class EMS {
                 }
                 return EmpDataAccess.EmpSearchByID(id, URL, DB_USER, DB_PASS);
             }
-            case "5": return null;
+            case "4": return null;
             default:
                 System.out.println("Invalid choice.");
                 return null;
@@ -431,7 +427,7 @@ public class EMS {
 
     public static void printEmployees(ArrayList<Employee> myEmployees) {
         System.out.println("\nCurrent Employees Report at Company Z\n");
-        System.out.println("ID\tName\t\tEmail\t\tHire Date");
+        System.out.println("ID\tName\t\tEmail\t\t\tHire Date");
         if (myEmployees == null || myEmployees.isEmpty()) {
             System.out.println("(no employees)");
             return;
